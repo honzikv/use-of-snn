@@ -3,10 +3,10 @@ import zipfile
 
 from .DataParser import DataParser
 
+
 class P300Preprocessing:
 
-    def __init__(self, zip_path: str = os.path.join('..', 'datasets', 'PROJECT_DAYS_NUMBERS.zip')
-                 , working_directory: str = os.path.join('..', 'datasets', 'p300')):
+    def __init__(self, working_directory: str = os.path.join('..', 'datasets', 'p300')):
         self.working_directory = os.path.abspath(working_directory)
 
     def get_dataset(self):
@@ -26,8 +26,22 @@ class P300Preprocessing:
 
     def preprocess_data(self):
         for folder in os.listdir(self.working_directory):
-            dataParser = DataParser()
-            for file in os.listdir(os.path.join(self.working_directory, folder, 'Data')):
+            files = {}
+            data_path = os.path.join(self.working_directory, folder, 'Data')
+            for file in os.listdir(data_path):
+                extension = os.path.splitext(file)[1]
+                files[extension] = os.path.join(data_path, file)
+
+            try:
+                data_parser = DataParser(eeg_file_path=files['.eeg'],
+                                         vhdr_path=files['.vhdr'],
+                                         vmrk_path=files['.vmrk'])
+
+
+
+            except KeyError:
+                print('Incomplete data, skipping')
+                return
 
 
 preprocessing = P300Preprocessing()
