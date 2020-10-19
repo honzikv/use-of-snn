@@ -3,28 +3,40 @@ import logging
 import os
 import random
 from os import listdir
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 
 import mne
 from mne.io.brainvision.brainvision import RawBrainVision
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class DatasetPreprocessor:
 
-    def __init__(self, dataset_path=os.path.join('..', 'datasets', 'p300'), log_info=False,
-                 export=True, output_path=os.path.join('..', 'datasets', 'p300'), output_filename='p300_dataset'):
+    def __init__(self,
+                 dataset_path=os.path.join('..', 'datasets', 'p300'),
+                 log_info=False,
+                 export=True,
+                 output_path=os.path.join('..', 'datasets', 'p300'),
+                 output_filename='p300_dataset',
+                 t_min=-200,
+                 t_end=1000
+                 ):
         self.dataset_path = dataset_path
         self.export = export
         self.output_path = output_path
         self.log_info = log_info
         self.output_filename = output_filename
+        self.t_min = t_min
+        self.t_end = t_end
 
         if not log_info:
             mne.set_log_level(verbose='ERROR')
+
+    def load_from_file(self, file_path):
+        pass
 
     def create_dataset(self, test_data_percentage: float = .25, seed=0):
         """
@@ -43,7 +55,7 @@ class DatasetPreprocessor:
                 continue
 
             data_dir_path = os.path.join(path, 'Data')
-            experiment_epochs = DatasetPreprocessor.__parse_experiment__(data_dir_path)
+            experiment_epochs = self.__parse_experiment__(data_dir_path)
             all_epochs.append(experiment_epochs)
 
         random.seed(seed)
@@ -57,10 +69,9 @@ class DatasetPreprocessor:
         test_x, test_y = features[test_data_index:], labels[test_data_index:]
 
         if self.export:
-            data = [train_x, train_y, test_x, test_y]
             save_filename = os.path.join(self.output_path, self.output_filename)
-            np.savez_compressed(file= save_filename, *data)
-            logger.info('Output dataset saved to:',save_filename)
+            np.savez_compressed(file=save_filename, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y)
+            logger.info('Output dataset saved to:', save_filename)
 
         return train_x, train_y, test_x, test_y
 
@@ -71,7 +82,6 @@ class DatasetPreprocessor:
 
         epochs[0].load_data()
         features = epochs[0].get_data()
-        a = epochs[0].events
         labels = list(epochs[0].events[:, 2])  # only class is relevant
 
         for i in range(1, len(epochs)):
@@ -84,8 +94,7 @@ class DatasetPreprocessor:
 
         return features, np.array(labels)
 
-    @staticmethod
-    def __parse_experiment__(data_dir_path: str):
+    def __parse_experiment__(self, data_dir_path: str):
         vhdr_file = None
 
         for file in listdir(data_dir_path):
@@ -105,7 +114,14 @@ class DatasetPreprocessor:
             raw.drop_channels('EOG')
 
         events, event_ids = mne.events_from_annotations(raw)
-        epochs = mne.Epochs(raw, events, event_ids, tmin=-.4, tmax=.8)
+
+        reject_criteria = {'eeg': 100e-6}
+        epochs = mne.Epochs(raw=raw, events=events, event_id=event_ids,
+                            tmin=self.t_min, tmax=self.t_end,
+                            baseline=(-200, 0),
+                            reject=reject_criteria
+                            )
+
         return epochs
 
 
