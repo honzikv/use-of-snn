@@ -3,18 +3,17 @@ import os
 from typing import Union, List, Tuple
 
 import mne
-from mne.io.brainvision.brainvision import RawBrainVision
 
 import numpy as np
 
 
-class DataPreprocessing:
+class Preprocessing:
 
     def __init__(self,
                  root_path=os.path.join('..', 'datasets', 'p300'),
                  mne_log=False,
-                 t_pre_stimulus=200,
-                 t_post_stimulus=1000):
+                 t_pre_stimulus=.2,
+                 t_post_stimulus=1.0):
         self.root_path = root_path
         self.mne_log = mne_log
         self.t_pre_stimulus = t_pre_stimulus
@@ -43,7 +42,7 @@ class DataPreprocessing:
         if not self.mne_log:
             mne.set_log_level(verbose=False)
 
-        raw_list = self.__get_raw_list__()
+        raw_list = self.__get_vhdr_file_list__()
         epochs_list = []
         for raw in raw_list:
             epochs_list.append(self.__process_raw__(raw))
@@ -56,11 +55,6 @@ class DataPreprocessing:
 
         if save:
             np.savez_compressed(file=output_filepath, train_x=train_x, train_y=train_y, test_x=test_x, test_y=test_y)
-
-        self.logger.debug(str('train_x shape=', train_x.shape))
-        self.logger.debug(str('train_y shape=', train_y.shape))
-        self.logger.debug(str('test_x shape=', test_x.shape))
-        self.logger.debug(str('test_y shape=', test_y.shape))
 
         return (train_x, train_y), (test_x, test_y)
 
@@ -82,8 +76,8 @@ class DataPreprocessing:
 
         return features, labels
 
-    def __process_raw__(self, raw: RawBrainVision) -> mne.Epochs:
-        raw.load_data()
+    def __process_raw__(self, raw_file_name: str) -> mne.Epochs:
+        raw = mne.io.read_raw_brainvision(raw_file_name, preload=True)
 
         if 'EOG' in raw.ch_names:
             raw.drop_channels('EOG')
@@ -94,11 +88,11 @@ class DataPreprocessing:
         return mne.Epochs(
             raw=raw, events=events, event_id=event_id,
             tmin=(-self.t_pre_stimulus), tmax=self.t_post_stimulus,
-            baseline=(-200, 0),
+            baseline=(-.2, 0),
             reject=reject_criteria
         )
 
-    def __get_raw_list__(self) -> List[RawBrainVision]:
+    def __get_vhdr_file_list__(self) -> List[str]:
         raw_list = []
 
         for folder in os.listdir(self.root_path):
@@ -115,7 +109,8 @@ class DataPreprocessing:
             if vhdr is None:
                 continue
 
-            raw_list.append(mne.io.read_raw_brainvision(vhdr_fname=vhdr))
+            self.logger.debug(vhdr)
+            raw_list.append(vhdr)
 
         return raw_list
 
@@ -127,11 +122,3 @@ class DataPreprocessing:
                 return os.path.join(folder_path, file)
 
         return None
-
-
-data_parser = DataPreprocessing(mne_log=True)
-(train_x, train_y), (test_x, test_y) = data_parser.create_new_dataset()
-print(train_x.shape)
-print(train_y.shape)
-print(test_x.shape)
-print(test_y.shape)
