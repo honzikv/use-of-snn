@@ -48,6 +48,8 @@ class Preprocessing:
             epochs_list.append(self.__process_raw__(raw))
 
         features, labels = self.__create_dataset__(epochs_list)
+        labels = labels[:, 2]  # drop index 0, 1 since they are not relevant
+        features, labels = self.__filter_incorrect_labels__(features, labels) # filter incorrect labels
 
         test_index = int(features.shape[0] * (1 - test_percent))
         train_x, train_y = features[:test_index], labels[:test_index]
@@ -71,8 +73,14 @@ class Preprocessing:
             epoch = epochs_list[i]
             epoch.load_data()
 
-            features = np.row_stack((features, epoch.get_data()))
-            labels = np.row_stack((labels, epoch.events))
+            sample_features = epoch.get_data()
+            sample_labels = epoch.events
+
+            if sample_features.shape[0] == 0:
+                continue
+
+            features = np.row_stack((features, sample_features))
+            labels = np.row_stack((labels, sample_labels))
 
         return features, labels
 
@@ -115,6 +123,20 @@ class Preprocessing:
         return raw_list
 
     @staticmethod
+    def __filter_incorrect_labels__(features: np.ndarray, labels: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        label_index_list = []
+        for i in range(0, labels.shape[0]):
+            label = labels[i]
+            if label > 9:
+                label_index_list.append(i)
+
+        result_x = np.delete(features, label_index_list, axis=0)
+        result_y = np.delete(labels, label_index_list, axis=0)
+
+        # deletes incorrectly labeled indexes from both features and labels and returns copies of them
+        return np.delete(features, label_index_list, axis=0), np.delete(labels, label_index_list, axis=0)
+
+    @staticmethod
     def __get_vhdr__(folder_path: str) -> Union[str, None]:
         for file in os.listdir(folder_path):
             extension = os.path.splitext(file)[1]
@@ -122,3 +144,7 @@ class Preprocessing:
                 return os.path.join(folder_path, file)
 
         return None
+
+
+preprocessing = Preprocessing()
+preprocessing.create_new_dataset()
