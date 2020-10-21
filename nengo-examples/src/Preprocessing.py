@@ -49,7 +49,7 @@ class Preprocessing:
 
         features, labels = self.__create_dataset__(epochs_list)
         labels = labels[:, 2]  # drop index 0, 1 since they are not relevant
-        features, labels = self.__filter_incorrect_labels__(features, labels) # filter incorrect labels
+        features, labels = self.__filter_incorrect_labels__(features, labels)  # filter incorrect labels
 
         test_index = int(features.shape[0] * (1 - test_percent))
         train_x, train_y = features[:test_index], labels[:test_index]
@@ -130,9 +130,6 @@ class Preprocessing:
             if label > 9:
                 label_index_list.append(i)
 
-        result_x = np.delete(features, label_index_list, axis=0)
-        result_y = np.delete(labels, label_index_list, axis=0)
-
         # deletes incorrectly labeled indexes from both features and labels and returns copies of them
         return np.delete(features, label_index_list, axis=0), np.delete(labels, label_index_list, axis=0)
 
@@ -146,5 +143,10 @@ class Preprocessing:
         return None
 
 
-preprocessing = Preprocessing()
-preprocessing.create_new_dataset()
+def main():
+    preprocessing = Preprocessing()
+    preprocessing.create_new_dataset()
+
+
+if __name__ == '__main__':
+    main()
