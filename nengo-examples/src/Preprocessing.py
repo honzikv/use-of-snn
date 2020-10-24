@@ -42,9 +42,11 @@ class Preprocessing:
         if not self.mne_log:
             mne.set_log_level(verbose=False)
 
-        raw_list = self.__get_vhdr_file_list__()
+        raw_list = self.__get_experiment_file_list__()
         epochs_list = []
-        for raw in raw_list:
+        for item in raw_list:
+            raw = item[0]
+            target = item[1]
             epochs_list.append(self.__process_raw__(raw))
 
         features, labels = self.__create_dataset__(epochs_list)
@@ -100,7 +102,7 @@ class Preprocessing:
             reject=reject_criteria
         )
 
-    def __get_vhdr_file_list__(self) -> List[str]:
+    def __get_experiment_file_list__(self) -> List[Tuple[str, str]]:
         raw_list = []
 
         for folder in os.listdir(self.root_path):
@@ -113,12 +115,12 @@ class Preprocessing:
             # create data path
             data_path = os.path.join(folder_path, 'Data')
 
-            vhdr = self.__get_vhdr__(data_path)
-            if vhdr is None:
+            vhdr_target_tuple = self.__get_required_files__(data_path)
+            if vhdr_target_tuple is None:
                 continue
 
-            self.logger.debug(vhdr)
-            raw_list.append(vhdr)
+            self.logger.debug(vhdr_target_tuple)
+            raw_list.append(vhdr_target_tuple)
 
         return raw_list
 
@@ -134,11 +136,19 @@ class Preprocessing:
         return np.delete(features, label_index_list, axis=0), np.delete(labels, label_index_list, axis=0)
 
     @staticmethod
-    def __get_vhdr__(folder_path: str) -> Union[str, None]:
+    def __get_required_files__(folder_path: str) -> Union[Tuple[str, str], None]:
+        vhdr = None
+        target = None
+
         for file in os.listdir(folder_path):
             extension = os.path.splitext(file)[1]
             if extension == '.vhdr':
-                return os.path.join(folder_path, file)
+                vhdr = os.path.join(folder_path, file)
+            elif extension == '.txt':
+                target = os.path.join(folder_path, file)
+
+        if vhdr is not None and target is not None:
+            return vhdr, target
 
         return None
 
