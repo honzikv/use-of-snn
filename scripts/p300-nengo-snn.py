@@ -13,7 +13,7 @@ from tensorflow.python.keras.layers import Conv2D, BatchNormalization, Dropout, 
 
 os.makedirs('nengo', exist_ok=True)
 
-dataset_path = os.path.join('..', 'datasets', 'output', 'VarekaGTNEpochs.mat')
+dataset_path = os.path.join('..', 'datasets', 'VarekaGTNEpochs.mat')
 seed = 0
 np.random.seed(seed)
 tf.random.set_seed(seed)
@@ -48,25 +48,12 @@ def get_dataset(file: str):
 
 
 def create_model():
-    # model = Sequential()
-    # model.add(Conv2D(filters=6, kernel_size=(3, 3), activation=keras.activations.elu, input_shape=(3, 1200, 1),
-    #                  name='input_layer'))
-    # model.add(BatchNormalization())
-    # model.add(Dropout(0.5, seed=0))
-    # model.add(AveragePooling2D(pool_size=(1, 8)))
-    # model.add(Flatten())
-    # model.add(Dense(100, activation=keras.activations.elu))
-    # model.add(BatchNormalization())
-    # model.add(Dropout(0.5, seed=0))
-    # model.add(Dense(2, activation=keras.activations.softmax, name='output_layer'))
-    # model.compile(optimizer=keras.optimizers.Adam(), loss=keras.losses.BinaryCrossentropy(), metrics=['accuracy'])
-
     input = Input(shape=(1200, 3, 1), name='input_layer')
-    conv2d = Conv2D(filters=6, kernel_size=(3, 3), activation=keras.activations.elu)(input)
+    conv2d = Conv2D(filters=6, kernel_size=(3, 3), activation=keras.activations.relu)(input)
     dropout1 = Dropout(0.5, seed=0)(conv2d)
-    avg_pooling = AveragePooling2D(pool_size=(1, 8), padding='same')(dropout1)
-    flatten = Flatten()(avg_pooling)
-    dense1 = Dense(100, activation=keras.activations.elu)(flatten)
+    # avg_pooling = AveragePooling2D(pool_size=(1, 8), padding='same')(dropout1)
+    flatten = Flatten()(dropout1)
+    dense1 = Dense(100, activation=keras.activations.relu)(flatten)
     batch_norm = BatchNormalization()(dense1)
     dropout2 = Dropout(0.5, seed=0)(batch_norm)
     output = Dense(2, activation=keras.activations.softmax, name='output_layer')(dropout2)
@@ -89,8 +76,6 @@ def run_nengo_ann(train_x, train_y, valid_x, valid_y, test_x, test_y,
             metrics=['accuracy']
         )
 
-        print('x: {}, y: {}'.format(train_x.shape, train_y.shape))
-        print('vx: {}, vy: {}'.format(len(valid_x.shape), len(valid_y.shape)))
         history = simulator.fit(x=train_x, y=train_y,
                                 validation_data=(valid_x, valid_y),
                                 epochs=30,
@@ -105,25 +90,23 @@ def run_nengo_ann(train_x, train_y, valid_x, valid_y, test_x, test_y,
 
 
 def run_nengo_spiking(test_x, test_y, model, params_path=os.path.join('nengo', 'network_params')):
-    converter = nengo_dl.Converter(model, swap_activations={tf.nn.elu: nengo.SpikingRectifiedLinear()},
-                                   scale_firing_rates=1000, synapse=0.01)
+    converter = nengo_dl.Converter(model, swap_activations={tf.nn.relu: nengo.SpikingRectifiedLinear()},
+                                   scale_firing_rates=500, synapse=0.01)
 
-    timesteps = 30
+    timesteps = 10
     test_x = np.tile(test_x, (1, timesteps, 1))
 
     with converter.net:
         nengo_dl.configure_settings(stateful=False)
 
-    nengo_input = converter.model.get_layer('input_layer')
-    nengo_output = converter.model.get_layer('output_layer')
+    output_layer = converter.outputs[model.get_layer('output_layer')]
 
-    with nengo_dl.Simulator(converter.net, minibatch_size=10, progress_bar=False) as simulator:
+    with nengo_dl.Simulator(converter.net, minibatch_size=7, progress_bar=False) as simulator:
         simulator.load_params(params_path)
-        data = simulator.predict({nengo_input: test_x})
-        predictions = np.argmax(data[nengo_output][:, -1], axis=-1)
-        accuracy = (predictions == test_y).mean()
-        print('accuracy: {}%'.format(accuracy * 100))
-
+        predicted_data = simulator.predict(test_x)[output_layer]
+        predictions = np.argmax(predicted_data[:, -1], axis=-1)
+        accuracy = (predictions == test_y[:, 0, 0]).mean()
+        print(accuracy)
     return accuracy
 
 
@@ -136,7 +119,7 @@ print('total train_x data: {}, total test_x data: {}, total train_y data: {}, to
 valid, test, snn = [], [], []
 
 counter = 1
-monte_carlo = ShuffleSplit(n_splits=30, test_size=0.25, random_state=seed)
+monte_carlo = ShuffleSplit(n_splits=3, test_size=0.25, random_state=seed)
 for train, validation in monte_carlo.split(train_x):
     print('iteration {}'.format(counter))
     counter += 1
@@ -162,4 +145,3 @@ for train, validation in monte_carlo.split(train_x):
 
     spiking_acc = run_nengo_spiking(test_x=test_x, test_y=test_y, model=model)
     snn.append(spiking_acc)
-
