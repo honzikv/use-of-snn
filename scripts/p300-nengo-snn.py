@@ -90,10 +90,10 @@ def run_nengo_ann(train_x, train_y, valid_x, valid_y, test_x, test_y,
 
 
 def run_nengo_spiking(test_x, test_y, model, params_path=os.path.join('nengo', 'network_params')):
-    converter = nengo_dl.Converter(model, swap_activations={tf.nn.relu: nengo.SpikingRectifiedLinear()},
+    converter = nengo_dl.Converter(model, swap_activations={tf.nn.elu: nengo.SpikingRectifiedLinear()},
                                    scale_firing_rates=500, synapse=0.01)
 
-    timesteps = 10
+    timesteps = 50
     test_x = np.tile(test_x, (1, timesteps, 1))
 
     with converter.net:
