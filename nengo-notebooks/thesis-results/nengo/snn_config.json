@@ -1,0 +1,1 @@
+[{"timesteps": 30, "scale_firing_rates": 1000, "synapse": 0.01}, {"timesteps": 30, "scale_firing_rates": 1, "synapse": 0.01}, {"timesteps": 30, "scale_firing_rates": 1000, "synapse": "None"}, {"timesteps": 30, "scale_firing_rates": 1, "synapse": "None"}]
