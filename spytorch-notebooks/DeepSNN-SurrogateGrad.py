@@ -94,7 +94,7 @@ class DeepSNNModel:
         self.alpha = float(np.exp(-time_step / tau_syn))
         self.beta = float(np.exp(-time_step / tau_mem))
 
-        if (len(scale_params) == 2):
+        if len(scale_params) == 2:
             self.weight_scale = scale_params[0] - (scale_params[1] - self.beta)
         else:
             self.weight_scale = scale_params[0]
@@ -133,7 +133,7 @@ class DeepSNNModel:
             spike_rec_hidden_i = [mem_hidden_i]
 
             for dt in range(steps):
-                hi = hi_from_prev_layer[:, dt] + torch.einsum('ab, bc -> ac', (hi, self.recurrent_weights[i-1]))
+                hi = hi_from_prev_layer[:, dt] + torch.einsum('ab, bc -> ac', (hi, self.recurrent_weights[i - 1]))
                 mem_threshold = mem_hidden_i - 1.0
                 spike_out = spike_fn(mem_threshold)
                 rst = torch.zeros_like(mem_hidden_i)
@@ -172,7 +172,6 @@ class DeepSNNModel:
 
         out_rec = torch.stack(out_rec, dim=1)
         return out_rec, spike_recs, layer_outputs, mem_recs
-
 
     def run_feed_forward(self, inputs, batch_size, steps, spike_fn=SurrGradSpike.apply):
         layer_outputs = [inputs]
@@ -312,12 +311,31 @@ x_test = x_test.reshape(x_test.shape[0], -1) / 255
 y_train = np.array(train_dataset.targets, dtype=np.int)
 y_test = np.array(test_dataset.targets, dtype=np.int)
 
-units = [28 * 28, 100, 150, 250, 10]
-model = DeepSNNModel(units)
+# units = [28 * 28, 100, 150, 250, 10]
+# model = DeepSNNModel(units)
 
-print('Feedforward DSNN: 100 units in 1st hidden layer, 150 units in 2nd hidden layer, 250 units in third hidden layer')
-model.train(x_train, y_train, 256, num_epochs=15)
-print('Classification accuracy on training data: {:.5f}'.format(
-    compute_classification_accuracy(x_train, y_train, 256, model)))
-print('Classification accuracy on testing data: {:.5f}'.format(
-    compute_classification_accuracy(x_test, y_test, 256, model)))
+# # Epoch 1: loss=1.36680
+# # Epoch 2: loss=0.59760
+# # Epoch 3: loss=0.40115
+# # Epoch 4: loss=0.33162
+# # Epoch 5: loss=0.28503
+# # Epoch 6: loss=0.26364
+# # Epoch 7: loss=0.22988
+# # Epoch 8: loss=0.21795
+# # Epoch 9: loss=0.19492
+# # Epoch 10: loss=0.18948
+# # Epoch 11: loss=0.17962
+# # Epoch 12: loss=0.17441
+# # Epoch 13: loss=0.16754
+# # Epoch 14: loss=0.15600
+# # Epoch 15: loss=0.15005
+# # Classification accuracy on training data: 0.95641
+# # Classification accuracy on testing data: 0.94832
+
+
+# print('Feedforward DSNN: 100 units in 1st hidden layer, 150 units in 2nd hidden layer, 250 units in third hidden layer')
+# model.train(x_train, y_train, 256, num_epochs=15)
+# print('Classification accuracy on training data: {:.5f}'.format(
+#     compute_classification_accuracy(x_train, y_train, 256, model)))
+# print('Classification accuracy on testing data: {:.5f}'.format(
+#     compute_classification_accuracy(x_test, y_test, 256, model)))
