@@ -320,9 +320,9 @@ def compute_classification_accuracy(x_data, y_data, batch_size, snn_model: DeepS
 
 dataset_folder = os.path.join('cached_datasets')
 
-train_dataset = torchvision.datasets.MNIST(dataset_folder, train=True,
+train_dataset = torchvision.datasets.FashionMNIST(dataset_folder, train=True,
                                            transform=None, target_transform=None, download=True)
-test_dataset = torchvision.datasets.MNIST(dataset_folder, train=False,
+test_dataset = torchvision.datasets.FashionMNIST(dataset_folder, train=False,
                                           transform=None, target_transform=None, download=True)
 
 # Standardize data
@@ -336,8 +336,8 @@ y_test = np.array(test_dataset.targets, dtype=np.int)
 
 units = [28 * 28, 100, 150, 250, 10]
 model = DeepSNNModel(units, weight_scale=[7.0, 1.0], recurrent=True)
-# model = DeepSNNModel(units, weight_scale=[.2])
 
+# model = DeepSNNModel(units, weight_scale=[.2]) MNIST
 # # Epoch 1: loss=1.36680
 # # Epoch 2: loss=0.59760
 # # Epoch 3: loss=0.40115
@@ -364,13 +364,13 @@ print('Feedforward DSNN: 100 units in 1st hidden layer, 150 units in 2nd hidden 
 # print('Classification accuracy on testing data: {:.5f}'.format(
 #     compute_classification_accuracy(x_test, y_test, 256, model)))
 #
-model.train(x_train, y_train, 256, num_epochs=30, use_regularizer=False)
+model.train(x_train, y_train, 256, num_epochs=15, use_regularizer=False)
 print('Classification accuracy on training data: {:.5f}'.format(
     compute_classification_accuracy(x_train, y_train, 256, model)))
 print('Classification accuracy on testing data: {:.5f}'.format(
     compute_classification_accuracy(x_test, y_test, 256, model)))
 
-# recurrent
+# recurrent MNIST
 # Epoch 1: loss=2.08655
 # Epoch 2: loss=1.79964
 # Epoch 3: loss=1.27311
@@ -394,7 +394,7 @@ print('Classification accuracy on testing data: {:.5f}'.format(
 # Epoch 21: loss=0.53522
 # Epoch 22: loss=0.52068
 # Epoch 23: loss=0.47529
-#  Epoch 24: loss=0.47218
+# Epoch 24: loss=0.47218
 # Epoch 25: loss=0.46878
 # Epoch 26: loss=0.49306
 # Epoch 27: loss=0.45709
@@ -405,3 +405,22 @@ print('Classification accuracy on testing data: {:.5f}'.format(
 # Classification accuracy on testing data: 0.87019
 #
 # Process finished with exit code 0
+
+# recurrent Fashion-MNIST
+# Epoch 1: loss=1.77856
+# Epoch 2: loss=1.20576
+# Epoch 3: loss=1.16356
+# Epoch 4: loss=1.11315
+# Epoch 5: loss=1.03977
+# Epoch 6: loss=0.83302
+# Epoch 7: loss=0.80632
+# Epoch 8: loss=0.79265
+# Epoch 9: loss=0.81105
+# Epoch 10: loss=0.79459
+# Epoch 11: loss=0.76848
+# Epoch 12: loss=0.73179
+# Epoch 13: loss=0.75560
+# Epoch 14: loss=0.77908
+# Epoch 15: loss=0.74044
+# Classification accuracy on training data: 0.73751
+# Classification accuracy on testing data: 0.72646
