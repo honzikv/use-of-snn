@@ -320,107 +320,56 @@ def compute_classification_accuracy(x_data, y_data, batch_size, snn_model: DeepS
 
 dataset_folder = os.path.join('cached_datasets')
 
+models_mnist = [
+    DeepSNNModel([28*28, 256, 128]),
+    DeepSNNModel([28*28, 256, 128, 64]),
+    DeepSNNModel([28*28, 256, 128], recurrent=True),
+    DeepSNNModel([28*28, 256, 128, 64], recurrent=True),
+]
+
+models_fashion_mnist = [
+    DeepSNNModel([28*28, 256, 128]),
+    DeepSNNModel([28*28, 256, 128, 64]),
+    DeepSNNModel([28*28, 256, 128], recurrent=True),
+    DeepSNNModel([28*28, 256, 128, 64], recurrent=True),
+]
+
+mnist_acc, fashion_mnist_acc = [], []
+
+train_dataset = torchvision.datasets.MNIST(dataset_folder, train=True,
+                                           transform=None, target_transform=None, download=True)
+test_dataset = torchvision.datasets.MNIST(dataset_folder, train=False,
+                                          transform=None, target_transform=None, download=True)
+
+# MNIST standardization
+mnist_x_train = np.array(train_dataset.data, dtype=np.float)
+mnist_x_train = mnist_x_train.reshape(mnist_x_train.shape[0], -1) / 255
+mnist_x_test = np.array(test_dataset.data, dtype=np.float)
+mnist_x_test = mnist_x_test.reshape(mnist_x_test.shape[0], -1) / 255
+
+mnist_y_train = np.array(train_dataset.targets, dtype=np.int)
+mnist_y_test = np.array(test_dataset.targets, dtype=np.int)
+
+for model in models_mnist:
+    model.train(mnist_x_train, mnist_y_train, 256, num_epochs=30)
+    mnist_acc.append(compute_classification_accuracy(mnist_x_test, mnist_y_test, 256, model))
+
+
+# Fashion MNIST
 train_dataset = torchvision.datasets.FashionMNIST(dataset_folder, train=True,
                                            transform=None, target_transform=None, download=True)
 test_dataset = torchvision.datasets.FashionMNIST(dataset_folder, train=False,
                                           transform=None, target_transform=None, download=True)
 
-# Standardize data
-x_train = np.array(train_dataset.data, dtype=np.float)
-x_train = x_train.reshape(x_train.shape[0], -1) / 255
-x_test = np.array(test_dataset.data, dtype=np.float)
-x_test = x_test.reshape(x_test.shape[0], -1) / 255
+# Standardize the data
+fmnist_x_train = np.array(train_dataset.data, dtype=np.float)
+fmnist_x_train = fmnist_x_train.reshape(fmnist_x_train.shape[0], -1) / 255
+fmnist_x_test = np.array(test_dataset.data, dtype=np.float)
+fmnist_x_test = fmnist_x_test.reshape(fmnist_x_test.shape[0], -1) / 255
 
-y_train = np.array(train_dataset.targets, dtype=np.int)
-y_test = np.array(test_dataset.targets, dtype=np.int)
+fmnist_y_train = np.array(train_dataset.targets, dtype=np.int)
+fmnist_y_test = np.array(test_dataset.targets, dtype=np.int)
 
-units = [28 * 28, 100, 150, 250, 10]
-model = DeepSNNModel(units, weight_scale=[7.0, 1.0], recurrent=True)
-
-# model = DeepSNNModel(units, weight_scale=[.2]) MNIST
-# # Epoch 1: loss=1.36680
-# # Epoch 2: loss=0.59760
-# # Epoch 3: loss=0.40115
-# # Epoch 4: loss=0.33162
-# # Epoch 5: loss=0.28503
-# # Epoch 6: loss=0.26364
-# # Epoch 7: loss=0.22988
-# # Epoch 8: loss=0.21795
-# # Epoch 9: loss=0.19492
-# # Epoch 10: loss=0.18948
-# # Epoch 11: loss=0.17962
-# # Epoch 12: loss=0.17441
-# # Epoch 13: loss=0.16754
-# # Epoch 14: loss=0.15600
-# # Epoch 15: loss=0.15005
-# # Classification accuracy on training data: 0.95641
-# # Classification accuracy on testing data: 0.94832
-
-
-print('Feedforward DSNN: 100 units in 1st hidden layer, 150 units in 2nd hidden layer, 250 units in third hidden layer')
-# model.train(x_train, y_train, 256, num_epochs=15, use_regularizer=True)
-# print('Classification accuracy on training data: {:.5f}'.format(
-#     compute_classification_accuracy(x_train, y_train, 256, model)))
-# print('Classification accuracy on testing data: {:.5f}'.format(
-#     compute_classification_accuracy(x_test, y_test, 256, model)))
-#
-model.train(x_train, y_train, 256, num_epochs=15, use_regularizer=False)
-print('Classification accuracy on training data: {:.5f}'.format(
-    compute_classification_accuracy(x_train, y_train, 256, model)))
-print('Classification accuracy on testing data: {:.5f}'.format(
-    compute_classification_accuracy(x_test, y_test, 256, model)))
-
-# recurrent MNIST
-# Epoch 1: loss=2.08655
-# Epoch 2: loss=1.79964
-# Epoch 3: loss=1.27311
-# Epoch 4: loss=1.01257
-# Epoch 5: loss=0.74683
-# Epoch 6: loss=0.67017
-# Epoch 7: loss=0.65160
-# Epoch 8: loss=0.60494
-# Epoch 9: loss=0.59692
-# Epoch 10: loss=0.55067
-# Epoch 11: loss=0.55192
-# Epoch 12: loss=0.54532
-# Epoch 13: loss=0.51898
-# Epoch 14: loss=0.49240
-# Epoch 15: loss=0.54227
-# Epoch 16: loss=0.55434
-# Epoch 17: loss=0.49630
-# Epoch 18: loss=0.54247
-# Epoch 19: loss=0.52028
-# Epoch 20: loss=0.54653
-# Epoch 21: loss=0.53522
-# Epoch 22: loss=0.52068
-# Epoch 23: loss=0.47529
-# Epoch 24: loss=0.47218
-# Epoch 25: loss=0.46878
-# Epoch 26: loss=0.49306
-# Epoch 27: loss=0.45709
-# Epoch 28: loss=0.43952
-# Epoch 29: loss=0.42688
-# Epoch 30: loss=0.44613
-# Classification accuracy on training data: 0.87225
-# Classification accuracy on testing data: 0.87019
-#
-# Process finished with exit code 0
-
-# recurrent Fashion-MNIST
-# Epoch 1: loss=1.77856
-# Epoch 2: loss=1.20576
-# Epoch 3: loss=1.16356
-# Epoch 4: loss=1.11315
-# Epoch 5: loss=1.03977
-# Epoch 6: loss=0.83302
-# Epoch 7: loss=0.80632
-# Epoch 8: loss=0.79265
-# Epoch 9: loss=0.81105
-# Epoch 10: loss=0.79459
-# Epoch 11: loss=0.76848
-# Epoch 12: loss=0.73179
-# Epoch 13: loss=0.75560
-# Epoch 14: loss=0.77908
-# Epoch 15: loss=0.74044
-# Classification accuracy on training data: 0.73751
-# Classification accuracy on testing data: 0.72646
+for model in models_fashion_mnist:
+    model.train(fmnist_y_train, fmnist_y_train, 256, num_epochs=30)
+    fashion_mnist_acc.append(compute_classification_accuracy(fmnist_x_test, fmnist_y_test, 256, model))
