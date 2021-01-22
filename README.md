@@ -1,10 +1,5 @@
 # use-of-snn
-
-Sources:
-
-Nengo SNN conversion: https://colab.research.google.com/github/nengo/nengo-dl/blob/master/docs/examples/keras-to-snn.ipynb
-Used cloud computing server: https://console.paperspace.com/
-
+Repository for my bachelor thesis 'Use of Spiking Neural Networks'. This repository contains evaluation of different spiking neural networks on several datasets.
 
 This repository contains MODA sleep spindle dataset:
 
