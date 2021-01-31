@@ -1,4 +1,4 @@
-startSec	durationSec	eventName	
+startSec	durationSec	eventName
 8218.9336	115	segmentViewed	
 8488.9336	115	segmentViewed	
 14548.9336	115	segmentViewed	
