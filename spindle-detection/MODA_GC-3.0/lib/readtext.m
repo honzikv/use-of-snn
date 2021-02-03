@@ -64,7 +64,7 @@ function      [data, result]= readtext(text, delimiter, comment, quotes, options
 % COPYRIGHT (C) Peder Axensten (peder at axensten dot se), 2006-2007.
 
 % INSPIRATION: loadcell.m (id 1965). The goal of readtext is to be at least as flexible (you be 
-%   the judge) and quicker. On my test file (see below), readtext is about 3--4 times 
+%   the judge) and quicker. On my controller file (see below), readtext is about 3--4 times
 %   as quick, maybe even more on large files. In readtext you may use a regexp as 
 %   delimiter and it can ignore comments in the text file. 
 % 

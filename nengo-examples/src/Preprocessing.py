@@ -36,7 +36,7 @@ class Preprocessing:
     def create_new_dataset(self, test_percent=.25, save=True,
                            output_filepath=os.path.join('..', 'datasets', 'p300', 'p300_dataset')):
         if 0 > test_percent > .5:
-            self.logger.info('Invalid dataset test percentage - below 0 or above 50%, setting to 25%')
+            self.logger.info('Invalid dataset controller percentage - below 0 or above 50%, setting to 25%')
             test_percent = .25
 
         if not self.mne_log:
