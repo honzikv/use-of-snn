@@ -1,5 +1,5 @@
-# use-of-snn
-Repository for my bachelor thesis 'Use of Spiking Neural Networks'. This repository contains evaluation of different spiking neural networks on several datasets.
+# Use of Spiking Neural Networks
+A repository for my bachelor thesis 'Use of Spiking Neural Networks'. This repository contains several experiments with spiking networks on various datasets.
 
 Code from Spytorch used:
 
