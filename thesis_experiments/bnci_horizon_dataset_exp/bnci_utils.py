@@ -124,12 +124,19 @@ def get_metrics(simulator, output_layer, x_test, y_test, minibatch_size, network
 def get_metrics_keras(model, x_test, y_test, network_name):
     predictions = model.predict(x_test)
     predictions = np.argmax(predictions, axis=-1)
+    y_test = np.argmax(y_test, axis=-1)
 
     precision = metrics.precision_score(y_true=y_test, y_pred=predictions, average='binary')  # get precision score
     recall = metrics.recall_score(y_true=y_test, y_pred=predictions, average='binary')  # get recall
     f1 = metrics.f1_score(y_true=y_test, y_pred=predictions, average='binary')  # get f1 score
     accuracy = metrics.accuracy_score(y_true=y_test, y_pred=predictions)  # get accuracy
     confusion_matrix = metrics.confusion_matrix(y_true=y_test, y_pred=predictions)  # get confusion matrix
+
+    # Log the statistics
+    print(f'{network_name}: accuracy = {accuracy * 100}%, precision = {precision}, '
+          f'recall = {recall}, f1 = {f1}')
+    print('Confusion matrix:')
+    print(confusion_matrix)
 
     return accuracy, precision, recall, f1, confusion_matrix
 
@@ -297,7 +304,7 @@ def create_stats_df(df: pd.DataFrame):
     return pd.DataFrame(data_stats)
 
 
-def print_confusion_matrices(ann, snn):
+def print_confusion_matrices(ann, snn=None):
     """
     Prints confusion matrix in each iteraiton
     :param ann: list of results for ANN model from run_ann function
@@ -309,6 +316,9 @@ def print_confusion_matrices(ann, snn):
     print('Confusion matrices for the ANN:')
     for confusion_matrix in conf_matrices_ann:
         print(confusion_matrix, '\n')
+
+    if snn is None:
+        return
 
     # Print confusion matrices for SNN
     conf_matrices_snn = [x['confusion_matrix'] for x in snn]
