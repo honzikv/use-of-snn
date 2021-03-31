@@ -306,7 +306,7 @@ def create_stats_df(df: pd.DataFrame):
 
 def print_confusion_matrices(ann, snn=None):
     """
-    Prints confusion matrix in each iteraiton
+    Prints confusion matrix in each iteration
     :param ann: list of results for ANN model from run_ann function
     :param snn: list of results for SNN model from run_snn function
     """
