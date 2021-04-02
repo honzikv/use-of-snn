@@ -31,7 +31,8 @@ def load_dataset(dataset_file_path):
 def reshape_dataset(features, labels):
     """
     Reshapes the dataset to be usable within NengoDL. The features will be transformed for input shape (14, 360, 1)
-    and the labels will be one-hot encoded
+    and the labels will be one-hot encoded. Note that the labels need to be named 'yes' and 'no' in order for the
+    metrics calculation function to work
     :param features: numpy array containing features
     :param labels: numpy array containing labels
     :return: transformed features and labels
@@ -105,6 +106,7 @@ def get_metrics(simulator, output_layer, x_test, y_test, minibatch_size, network
     y_test = np.squeeze(y_test, axis=1)  # remove time dimension
     y_test_argm = np.argmax(y_test, axis=-1)  # get labels
 
+    # Here we do not need to change
     precision = metrics.precision_score(y_true=y_test_argm, y_pred=predictions_argm,
                                         average='binary')  # get precision score
     recall = metrics.recall_score(y_true=y_test_argm, y_pred=predictions_argm, average='binary')  # get recall
