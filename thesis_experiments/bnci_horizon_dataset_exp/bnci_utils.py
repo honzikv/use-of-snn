@@ -1,22 +1,18 @@
-import os
 import numpy as np
 import tensorflow as tf
-import keras
 import nengo_dl
 from tensorflow.python.keras import Input, Model
 import nengo
-from tensorflow.python.keras.callbacks import EarlyStopping
-from tensorflow.python.keras.layers import Conv2D, Dropout, AveragePooling2D, Flatten, Dense, BatchNormalization, Conv3D
+from tensorflow.python.keras.layers import Conv2D, Dropout, AveragePooling2D, Flatten, Dense, BatchNormalization, LSTM
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split
-from keras import backend as K
 import pandas as pd
 from sklearn import metrics
-
+from tensorflow.python.keras.models import Sequential
 
 # This file contains utility functions that are used across all notebooks that use BNCI dataset
 # This is mainly done to reduce the overall boilerplate in the notebooks as the code to run the network would be mostly
 # the same in all cases
+
 
 def load_dataset(dataset_file_path):
     """
