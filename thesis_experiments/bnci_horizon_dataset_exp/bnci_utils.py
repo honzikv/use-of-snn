@@ -81,9 +81,9 @@ def original_p300_model(seed=0):
 
 def get_metrics(simulator, output_layer, x_test, y_test, minibatch_size, network_name):
     """
-    Function for calculating metrics
+    Function for calculating metrics for Nengo simulator
+    :param minibatch_size: batch size used in simulator to truncate redundant samples in x_test and y_test
     :param simulator: simulator instance
-    :param input_layer: input layer reference
     :param output_layer: output layer reference
     :param x_test: features of the testing subset
     :param y_test: labels of the testing subset
@@ -120,6 +120,14 @@ def get_metrics(simulator, output_layer, x_test, y_test, minibatch_size, network
 
 
 def get_metrics_keras(model, x_test, y_test, network_name):
+    """
+    Computes metrics in keras environment - i.e., if Nengo is not used (during LSTM simulation)
+    :param model: reference to the model for calling predict function
+    :param x_test: testing features
+    :param y_test: testing labels
+    :param network_name: name of the network for output
+    :return:
+    """
     predictions = model.predict(x_test)
     predictions = np.argmax(predictions, axis=-1)
     y_test = np.argmax(y_test, axis=-1)
@@ -205,6 +213,7 @@ def run_snn(model, x_test, y_test, params_load_path, iteration, timesteps=50,
             batch_size=16):
     """
     Run model in spiking setting
+    :param batch_size: batch size
     :param model: model reference
     :param x_test: testing features
     :param y_test: testing labels
