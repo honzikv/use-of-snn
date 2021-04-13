@@ -1,7 +1,7 @@
 # Use of Spiking Neural Networks
 A repository for my bachelor thesis 'Use of Spiking Neural Networks'. This repository contains several experiments with spiking networks on various datasets.
 
-Experiments:
+**Experiments:**
     
 1. P300 Experiment - in folder "experiments/p300"
     * To start the simulation run p300_dataset_exp_convnet.ipynb
