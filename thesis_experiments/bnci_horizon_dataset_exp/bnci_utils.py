@@ -7,9 +7,8 @@ from tensorflow.python.keras.layers import Conv2D, Dropout, AveragePooling2D, Fl
 from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 from sklearn import metrics
-from tensorflow.python.keras.models import Sequential
 
-# This file contains utility functions that are used across all notebooks that use BNCI dataset
+# This file contains utility functions that are used across all notebooks during the BNCI dataset experiment
 # This is mainly done to reduce the overall boilerplate in the notebooks as the code to run the network would be mostly
 # the same in all cases
 
