@@ -20,6 +20,6 @@ Experiments:
 SpyTorch experiment also uses code from:
 https://github.com/fzenke/spytorch
 
-References:
+**References:**
 
 Neftci, E.O., Mostafa, H., and Zenke, F. (2019). Surrogate Gradient Learning in Spiking Neural Networks: Bringing the Power of Gradient-based optimization to spiking neural networks. IEEE Signal Processing Magazine 36, 51–63. https://ieeexplore.ieee.org/document/8891809 preprint: https://arxiv.org/abs/1901.09948
