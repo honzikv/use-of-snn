@@ -6,7 +6,7 @@ A repository for my bachelor thesis 'Use of Spiking Neural Networks'. This repos
 1. P300 Experiment - in folder "experiments/p300"
     * To start the simulation run p300_dataset_exp_convnet.ipynb
     * Visualization notebook - p300_stats_visualization.ipynb can be run to produce images present in the bachelor thesis
-    * The dataset can be download here: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/G9RRLN
+    * The dataset can be downloaded here: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/G9RRLN
     
 2. Training deep SNN using surrogate gradient - in folder "experiments/surr_grad_snn"
     * To start the simulation run Deep-snns-surrogate-grad.ipynb
