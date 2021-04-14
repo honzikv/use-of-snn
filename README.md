@@ -1,5 +1,5 @@
 # Use of Spiking Neural Networks
-A repository for my bachelor thesis 'Use of Spiking Neural Networks'. This repository contains several experiments with spiking networks on various datasets.
+A repository for my thesis 'Use of Spiking Neural Networks'. This repository contains several experiments with spiking networks on various datasets.
 
 **Experiments:**
     
