@@ -1,7 +1,7 @@
 # Use of Spiking Neural Networks
 A repository for my thesis 'Use of Spiking Neural Networks'. This repository contains several experiments with spiking networks on various datasets.
 
-**Experiments:**
+#Experiments:
     
 1. P300 Experiment - in folder "experiments/p300"
     * To start the simulation run p300_dataset_exp_convnet.ipynb
@@ -18,6 +18,10 @@ A repository for my thesis 'Use of Spiking Neural Networks'. This repository con
         * For all samples run bnci_horizon_convnet_all_samples.ipynb for both CNN architectures and bnci_horzion_lstm_all_samples.ipynb for the LSTM network
         * For experiment on individuals run bnci_horizon_convnet_individuals.ipynb and bnci_horizon_lstm_individuals.ipynb
     * The dataset description and its download is available here: https://lampx.tugraz.at/~bci/database/002-2020/Dataset_description.pdf
+
+**Getting started**
+
+To run the experiments 
 
 
 The surrogate gradient also uses part of the code from the SpyTorch GitHub repository:
