@@ -1,4 +1,4 @@
-# Alternatively you can run this script instead of the data_preprocessing notebook
+# Alternatively you can run this script instead of the data_preprocessing.ipynb notebook
 
 import scipy.signal
 import numpy as np
