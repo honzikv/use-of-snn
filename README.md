@@ -52,6 +52,6 @@ This experiment uses EEG samples from a P300 dataset that can be downloaded here
 Here, one notebook contains code to run the experiment, while the other can be used for visualization (though it is not necessary). To run the experiment open the **p300_dataset_exp_convnet.ipynb** file and execute all cells. The output of the dataset can then be used in the **p300_stats_visualization.ipynb** file.
 
 ## Surrogate gradient experiment
-This experiment does not require any additional downloads. To run it, simply execute all cells in the **surrogate_gradient_deep_snns.ipynb** notebook. Note that it uses PyTorch and is relatively long (compared to the other two experiments) and thus GPU computation is recommended (with GTX 1060 6GB one model took around 40 - 60 mins).
+This experiment does not require any additional downloads. To run it, simply execute all cells in the **surrogate_gradient_deep_snns.ipynb** notebook. Note that it uses PyTorch and the simulation is relatively long (compared to the other two experiments) - thus using GPU is highly recommended (with GTX 1060 6GB one model took around 40 - 60 mins).
 
 Part of the notebook uses code from https://github.com/fzenke/spytorch.
