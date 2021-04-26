@@ -1,5 +1,5 @@
 # Use of Spiking Neural Networks
-This repository contains all three experiments that were conducted during my thesis 'Use of Spiking Neural Networks'. All three experiments are reproducable using combination of Python scripts and Jupyter Notebooks.
+This repository contains all three experiments that were conducted in my thesis 'Use of Spiking Neural Networks'. All three experiments are reproducable using combination of Python scripts and Jupyter Notebooks.
 
 # Setting up the environment
 Firstly, it is recommended to set up a new Python/Conda virtual environment so that there are no conflicts in dependencies. The root folder contains **requirements.txt** file that can be used to download all dependencies except PyTorch and CUDA support (there were some issues when installing them via pip).
