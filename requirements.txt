@@ -11,4 +11,5 @@ pymatreader==0.0.24
 scikit-learn==0.24.1
 scipy==1.6.1
 xlrd==2.0.1
-openpyxl=3.0.7
+openpyxl==3.0.7
+pydot==1.4.2
