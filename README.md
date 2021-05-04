@@ -14,6 +14,7 @@ This quick setup guide only shows how to get the repo working using Anaconda (de
 4. Now activate the environment using `conda activate name_of_the_environment`
 5. Install dependencies from the root folder of the repository using `pip install -r requirements.txt`
 6. Now PyTorch can be installed as well using `conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge` if you have Nvidia GPU available (with CUDA cores) or `conda install pytorch torchvision torchaudio cpuonly -c pytorch` if you do not have GPU or wish to only use CPU
+7. In some cases, PyTorch might install a newer version of NumPy which may be incompatible with TensorFlow. To fix this, you can roll back to the previous version by running: `pip install numpy==1.9.5`
 
 # Running the experiments
 Jupyter notebooks (files that end with *.ipynb* extension) are required to run all three experiments (Jupyter is already present in the requirements.txt files). To run any notebook, Jupyter server needs to be started. This serves as an editor to run and edit any code. Open jupyter server (ideally again in the root folder of the downloaded repository) using: `jupyter notebook`
